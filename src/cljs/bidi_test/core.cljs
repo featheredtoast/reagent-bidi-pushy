@@ -8,10 +8,8 @@
 (def app-state (atom {:text "Hello Chestnut!"}))
 
 (def app-routes [
-                 "/" {"index.html" :home
-                     "foo" :foo
-                     "#foo" :foo
-                     "" :home
+                 "/" {(bidi/alts "" "index.html") :root
+                      (bidi/alts "foo" "fooalt") :foo
                      true :not-found}])
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
@@ -28,7 +26,9 @@
   (print "totally not found")
   (swap! app-state assoc :text "not found"))
 
-(defmethod dispatch :default [_] (dispatch {:handler :root}))
+(defmethod dispatch :default [_]
+  (print "default handler, submit to not found")
+  (dispatch {:handler :not-found}))
 
 (defn set-page! [match]
   (swap! app-state assoc :page match)
@@ -46,13 +46,15 @@
    [:div (:text @app-state)]
    [:li
     [:ul
-     [:a {:href "/"} "root"]]
+     [:a {:href (bidi/path-for app-routes :root)} "root"]]
     [:ul
-     [:a {:href "/index.html"} "index"]]
+     [:a {:href "/index.html"} "root alt"]]
     [:ul
-     [:a {:href "/foo"} "foo"]]
+     [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
     [:ul
-     [:a {:href "/#foo"} "#foo"]]]])
+     [:a {:href "/fooalt"} "foo alt"]]
+    [:ul
+     [:a {:href "/somewhere else"} "not found"]]]])
 
 (defn app []
   (reagent/render-component [component]
