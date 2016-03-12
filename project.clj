@@ -41,9 +41,9 @@
               {:app
                {:source-paths ["src/cljs"]
 
-                :figwheel true
+                ;; :figwheel true
                 ;; Alternatively, you can configure a function to run every time figwheel reloads.
-                ;; :figwheel {:on-jsload "bidi-test.core/on-figwheel-reload"}
+                :figwheel {:on-jsload "bidi-test.core/on-figwheel-reload"}
 
                 :compiler {:main bidi-test.core
                            :asset-path "js/compiled/out"

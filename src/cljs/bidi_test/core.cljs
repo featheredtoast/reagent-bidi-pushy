@@ -9,7 +9,7 @@
 
 (def app-routes [
                  "/" {(bidi/alts "" "index.html") :root
-                      (bidi/alts "foo" "fooalt") :foo
+                      "foo2" :foo
                      true :not-found}])
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
@@ -52,7 +52,7 @@
     [:ul
      [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
     [:ul
-     [:a {:href "/fooalt"} "foo alt"]]
+     [:a {:href "/foo"} "foo alt"]]
     [:ul
      [:a {:href "/somewhere else"} "not found"]]]])
 
@@ -60,3 +60,6 @@
   (reagent/render-component [component]
                             (.getElementById js/document "app")))
 (app)
+
+(defn on-figwheel-reload []
+  (print "reloading!"))
