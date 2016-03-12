@@ -7,10 +7,11 @@
 
 (def app-state (atom {:text "Hello Chestnut!"}))
 
-(def app-routes ["/" {"" :home
+(def app-routes [
+                 "/" {"index.html" :home
                       "foo" :foo
                       "#foo" :foo}
-                 true :not-found])
+                 [true :not-found]])
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
@@ -41,7 +42,9 @@
    [:div (:text @app-state)]
    [:li
     [:ul
-     [:a {:href "/"} "home"]]
+     [:a {:href "/"} "root"]]
+    [:ul
+     [:a {:href "/index.html"} "index"]]
     [:ul
      [:a {:href "/foo"} "foo"]]
     [:ul
