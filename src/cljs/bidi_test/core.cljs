@@ -9,9 +9,10 @@
 
 (def app-routes [
                  "/" {"index.html" :home
-                      "foo" :foo
-                      "#foo" :foo
-                      true :not-found}])
+                     "foo" :foo
+                     "#foo" :foo
+                     "" :home
+                     true :not-found}])
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
