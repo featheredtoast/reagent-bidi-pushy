@@ -16,13 +16,16 @@
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
 (defmethod dispatch :root [_]
-  (print "hi from root"))
+  (print "hi from root")
+  (swap! app-state assoc :text "at root"))
 
 (defmethod dispatch :foo [_]
-  (print "hi from foo"))
+  (print "hi from foo")
+  (swap! app-state assoc :text "at foo"))
 
 (defmethod dispatch :not-found [_]
-  (print "totally not found"))
+  (print "totally not found")
+  (swap! app-state assoc :text "not found"))
 
 (defmethod dispatch :default [_] (dispatch {:handler :root}))
 
