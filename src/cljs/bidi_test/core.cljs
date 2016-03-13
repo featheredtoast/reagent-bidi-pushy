@@ -9,21 +9,60 @@
 
 (def app-routes [
                  "/" {(bidi/alts "" "index.html") :root
-                      "foo2" :foo
-                     true :not-found}])
+                      "foo" :foo
+                      true :not-found}])
+
+(defn component-foo []
+  [:div {:style {:color "green"}}
+   [:h1 "foo"]
+   [:div (:text @app-state)]
+   [:li
+    [:ul
+     [:a {:href (bidi/path-for app-routes :root)} "root"]]
+    [:ul
+     [:a {:href "/index.html"} "root alt"]]
+    [:ul
+     [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
+    [:ul
+     [:a {:href "/foo"} "foo alt"]]
+    [:ul
+     [:a {:href "/somewhere else"} "not found"]]]])
+
+(defn component-root []
+  [:div {:style {:color "blue"}}
+   [:h1 "hi"]
+   [:div (:text @app-state)]
+   [:li
+    [:ul
+     [:a {:href (bidi/path-for app-routes :root)} "root"]]
+    [:ul
+     [:a {:href "/index.html"} "root alt"]]
+    [:ul
+     [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
+    [:ul
+     [:a {:href "/foo"} "foo alt"]]
+    [:ul
+     [:a {:href "/somewhere else"} "not found"]]]])
+
+(defn foo-panel []
+  (reagent/render-component [component-foo]
+                            (.getElementById js/document "app")))
+
+(defn root-panel []
+  (reagent/render-component [component-root]
+                            (.getElementById js/document "app")))
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
 (defmethod dispatch :root [_]
-  (print "hi from root")
-  (swap! app-state assoc :text "at root"))
+  (swap! app-state assoc :text "at root")
+  (root-panel))
 
 (defmethod dispatch :foo [_]
-  (print "hi from foo")
-  (swap! app-state assoc :text "at foo"))
+  (swap! app-state assoc :text "at foo")
+  (foo-panel))
 
 (defmethod dispatch :not-found [_]
-  (print "totally not found")
   (swap! app-state assoc :text "not found"))
 
 (defmethod dispatch :default [_]
@@ -39,27 +78,6 @@
   (pushy/pushy set-page! (partial bidi/match-route app-routes)))
 
 (pushy/start! history)
-
-(defn component []
-  [:div
-   [:h1 "hi"]
-   [:div (:text @app-state)]
-   [:li
-    [:ul
-     [:a {:href (bidi/path-for app-routes :root)} "root"]]
-    [:ul
-     [:a {:href "/index.html"} "root alt"]]
-    [:ul
-     [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
-    [:ul
-     [:a {:href "/foo"} "foo alt"]]
-    [:ul
-     [:a {:href "/somewhere else"} "not found"]]]])
-
-(defn app []
-  (reagent/render-component [component]
-                            (.getElementById js/document "app")))
-(app)
 
 (defn on-figwheel-reload []
   (print "reloading!"))
