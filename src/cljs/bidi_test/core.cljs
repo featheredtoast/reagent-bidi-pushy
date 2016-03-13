@@ -5,62 +5,53 @@
 
 (enable-console-print!)
 
-(def app-state (atom {:text "Hello Chestnut!"}))
-
 (def app-routes [
                  "/" {(bidi/alts "" "index.html") :root
-                      "foo" :foo
+                      "foo2" :foo
                       true :not-found}])
+
+(def app-state (atom {:text "Hello Chestnut!"
+                      :root-link (bidi/path-for app-routes :root)
+                      :foo-link (bidi/path-for app-routes :foo)}))
+
+(def match-route (partial bidi/match-route app-routes))
+
+(defn component-links [root-link foo-link]
+  [:li
+    [:ul
+     [:a {:href root-link} "root"]]
+    [:ul
+     [:a {:href "/index.html"} "root alt"]]
+    [:ul
+     [:a {:href foo-link} "foo"]]
+   [:ul
+     [:a {:href "/somewhere else"} "not found"]]])
 
 (defn component-foo []
   [:div {:style {:color "green"}}
    [:h1 "foo"]
    [:div (:text @app-state)]
-   [:li
-    [:ul
-     [:a {:href (bidi/path-for app-routes :root)} "root"]]
-    [:ul
-     [:a {:href "/index.html"} "root alt"]]
-    [:ul
-     [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
-    [:ul
-     [:a {:href "/foo"} "foo alt"]]
-    [:ul
-     [:a {:href "/somewhere else"} "not found"]]]])
+   [component-links (:root-link @app-state) (:foo-link @app-state)]])
 
 (defn component-root []
   [:div {:style {:color "blue"}}
-   [:h1 "hi"]
+   [:h1 "root"]
    [:div (:text @app-state)]
-   [:li
-    [:ul
-     [:a {:href (bidi/path-for app-routes :root)} "root"]]
-    [:ul
-     [:a {:href "/index.html"} "root alt"]]
-    [:ul
-     [:a {:href (bidi/path-for app-routes :foo)} "foo"]]
-    [:ul
-     [:a {:href "/foo"} "foo alt"]]
-    [:ul
-     [:a {:href "/somewhere else"} "not found"]]]])
+   [component-links (:root-link @app-state) (:foo-link @app-state)]])
 
-(defn foo-panel []
-  (reagent/render-component [component-foo]
-                            (.getElementById js/document "app")))
-
-(defn root-panel []
-  (reagent/render-component [component-root]
+(defn render-app-component [component]
+  (reagent/render-component [component]
                             (.getElementById js/document "app")))
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
 (defmethod dispatch :root [_]
   (swap! app-state assoc :text "at root")
-  (root-panel))
+  (render-app-component component-root))
 
 (defmethod dispatch :foo [_]
   (swap! app-state assoc :text "at foo")
-  (foo-panel))
+  (render-app-component component-foo))
 
 (defmethod dispatch :not-found [_]
   (swap! app-state assoc :text "not found"))
@@ -75,9 +66,13 @@
   (dispatch match))
 
 (def history
-  (pushy/pushy set-page! (partial bidi/match-route app-routes)))
+  (pushy/pushy set-page! match-route))
 
 (pushy/start! history)
 
+(print (str "checking match-route: " (match-route (bidi/path-for app-routes :foo))))
+
 (defn on-figwheel-reload []
-  (print "reloading!"))
+  (print "reloading!")
+  (pushy/stop! history)
+  (pushy/start! history))
