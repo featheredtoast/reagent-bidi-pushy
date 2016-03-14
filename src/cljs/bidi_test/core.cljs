@@ -7,7 +7,7 @@
 
 (def app-routes [
                  "/" {(bidi/alts "" "index.html") :root
-                      "foo2" :foo
+                      "foo" :foo
                       true :not-found}])
 
 (def app-state (atom {:text "Hello Chestnut!"
@@ -30,28 +30,31 @@
 (defn component-foo []
   [:div {:style {:color "green"}}
    [:h1 "foo"]
-   [:div (:text @app-state)]
-   [component-links (:root-link @app-state) (:foo-link @app-state)]])
+   [:div (:text @app-state)]])
 
 (defn component-root []
   [:div {:style {:color "blue"}}
    [:h1 "root"]
-   [:div (:text @app-state)]
+   [:div (:text @app-state)]])
+
+(defn component-main []
+  [:div
+   [(:view @app-state)]
    [component-links (:root-link @app-state) (:foo-link @app-state)]])
 
-(defn render-app-component [component]
-  (reagent/render-component [component]
+(defn render-app []
+  (reagent/render-component [component-main]
                             (.getElementById js/document "app")))
 
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
 (defmethod dispatch :root [_]
   (swap! app-state assoc :text "at root")
-  (render-app-component component-root))
+  (swap! app-state assoc :view component-root))
 
 (defmethod dispatch :foo [_]
   (swap! app-state assoc :text "at foo")
-  (render-app-component component-foo))
+  (swap! app-state assoc :view component-foo))
 
 (defmethod dispatch :not-found [_]
   (swap! app-state assoc :text "not found"))
@@ -71,6 +74,8 @@
 (pushy/start! history)
 
 (print (str "checking match-route: " (match-route (bidi/path-for app-routes :foo))))
+
+(render-app)
 
 (defn on-figwheel-reload []
   (print "reloading!")
