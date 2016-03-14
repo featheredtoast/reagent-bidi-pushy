@@ -5,6 +5,12 @@
 
 (enable-console-print!)
 
+(defonce old-history (atom {:history false}))
+
+(when-let [old-history (:history @old-history)]
+  (print (str "stopping old history... " old-history))
+  (pushy/stop! old-history))
+
 (def app-routes [
                  "/" {(bidi/alts "" "index.html") :root
                       "foo" :foo
@@ -72,12 +78,9 @@
   (pushy/pushy set-page! match-route))
 
 (pushy/start! history)
-
-(print (str "checking match-route: " (match-route (bidi/path-for app-routes :foo))))
+(swap! old-history assoc :history history)
 
 (render-app)
 
 (defn on-figwheel-reload []
-  (print "reloading!")
-  (pushy/stop! history)
-  (pushy/start! history))
+  (print "reloading!"))
