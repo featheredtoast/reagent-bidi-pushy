@@ -23,30 +23,36 @@
 (def match-route (partial bidi/match-route app-routes))
 
 (defn component-links [root-link foo-link]
-  [:li
-    [:ul
+  [:ul {:id "nav" :class "nav"}
+    [:li
      [:a {:href root-link} "root"]]
-    [:ul
+    [:li
      [:a {:href "/index.html"} "root alt"]]
-    [:ul
+    [:li
      [:a {:href foo-link} "foo"]]
-   [:ul
-     [:a {:href "/somewhere else"} "not found"]]])
+   [:li
+    [:a {:href "/somewhere else"} "not found"]]
+   [:li
+    [:a {:href "https://github.com/juxt/bidi"} "Bidi"]]])
 
 (defn component-foo []
-  [:div {:style {:color "green"}}
+  [:div
    [:h1 "foo"]
    [:div (:text @app-state)]])
 
 (defn component-root []
-  [:div {:style {:color "blue"}}
+  [:div
    [:h1 "root"]
    [:div (:text @app-state)]])
 
 (defn component-main []
   [:div
-   [(:view @app-state)]
-   [component-links (:root-link @app-state) (:foo-link @app-state)]])
+   [:div {:class "header"}
+    [:h1 "Really neat bidi tests!"]]
+   [:div {:class "content"}
+    [component-links (:root-link @app-state) (:foo-link @app-state)]
+    [:div {:class "main"}
+     [(:view @app-state)]]]])
 
 (defn render-app []
   (reagent/render-component [component-main]
@@ -55,15 +61,20 @@
 (defmulti dispatch (fn [{:keys [handler] :as match}] handler))
 
 (defmethod dispatch :root [_]
-  (swap! app-state assoc :text "at root")
+  (swap! app-state assoc :text "at root.
+This is the root home page. It is also the default landing page
+for example when you hit /ffff or something random like that.
+The text will be different, but you get the idea. The app states are the same.
+Thanks to compojure and bidi's routes /index.html is the catch all bucket!")
   (swap! app-state assoc :view component-root))
 
 (defmethod dispatch :foo [_]
-  (swap! app-state assoc :text "at foo")
+  (swap! app-state assoc :text "at foo. Consider this a second page or something.")
   (swap! app-state assoc :view component-foo))
 
 (defmethod dispatch :not-found [_]
-  (swap! app-state assoc :text "not found"))
+  (swap! app-state assoc :text "not found. Check out this 404 thingy.")
+  (swap! app-state assoc :view component-root))
 
 (defmethod dispatch :default [_]
   (print "default handler, submit to not found")

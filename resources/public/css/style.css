@@ -1,3 +1,38 @@
-h1 {
-  text-decoration: underline;
+@import url(https://fonts.googleapis.com/css?family=Josefin+Sans:400);
+.nav {
+    display: table-cell;
+    padding: 0 10px 10px 15px;
+    background-color: #eaeaea;
+    list-style-type: none;
+    margin: 0px;
+    width: 10%;
+}
+.main {
+    display: table-cell;
+    padding: 10px;
+    background-color: yellow;
+}
+.main div h1 {
+    margin: 0px;
+}
+.header {
+    margin: 0px;
+    display: inline-block;
+    background-color: #eaeaea;
+    height: 50px;
+    width: 100%;
+    text-align: center;
+}
+.header h1 {
+    margin-top: 10px;
+}
+body {
+    font-family: 'Josefin Sans', sans-serif;
+    margin: 100px 100px 0 100px;
+    background-color: fafafa;
+}
+.content {
+    display: table;
+    width: 100%;
+    min-height: 100vh;
 }
