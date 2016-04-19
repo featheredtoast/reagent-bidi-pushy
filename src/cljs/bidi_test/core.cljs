@@ -80,7 +80,7 @@ things"]])
 (defn component-main []
   [:div {:class "container-fluid"}
    [:nav {:class "navbar navbar-default navbar-fixed-top"}
-    [:h1 "Really neat bidi tests!"]]
+    [:h3 {:style {"text-align" "center"}} "Really neat bidi tests!"]]
    [:div {:class "row-fluid"}
     [:div {:class "content"}
      [:div {:class "col-md-2"}
