@@ -1,11 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Josefin+Sans:400);
 
-.header {
-    background-color: #eaeaea;
-    text-align: center;
-}
 body {
     font-family: 'Josefin Sans', sans-serif;
     background-color: fafafa;
-    margin: 100px;
+    white-space: pre;
+    padding-top: 50px;
 }

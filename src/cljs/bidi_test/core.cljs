@@ -43,13 +43,44 @@
 (defn component-root []
   [:div
    [:h1 "root"]
-   [:div (:text @app-state)]])
+   [:div (:text @app-state)]
+   [:div "oh man
+
+
+
+can we have spaces here?? apparently not...
+
+
+
+wait yes we can. with white-space pre
+
+
+
+this is cool
+
+
+
+
+
+
+
+
+now to test out all the crazy
+
+
+crazy crazy 
+
+
+
+
+
+
+things"]])
 
 (defn component-main []
   [:div {:class "container-fluid"}
-   [:div {:class "row-fluid"}
-    [:div {:class "header col-md-12"}
-     [:h1 "Really neat bidi tests!"]]]
+   [:nav {:class "navbar navbar-default navbar-fixed-top"}
+    [:h1 "Really neat bidi tests!"]]
    [:div {:class "row-fluid"}
     [:div {:class "content"}
      [:div {:class "col-md-2"}
