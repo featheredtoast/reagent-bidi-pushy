@@ -23,7 +23,7 @@
 (def match-route (partial bidi/match-route app-routes))
 
 (defn component-links [root-link foo-link]
-  [:ul {:id "nav" :class "nav"}
+  [:ul {:id "nav" :class "nav nav-pills nav-stacked"}
     [:li
      [:a {:href root-link} "root"]]
     [:li
@@ -46,13 +46,16 @@
    [:div (:text @app-state)]])
 
 (defn component-main []
-  [:div
-   [:div {:class "header"}
-    [:h1 "Really neat bidi tests!"]]
-   [:div {:class "content"}
-    [component-links (:root-link @app-state) (:foo-link @app-state)]
-    [:div {:class "main"}
-     [(:view @app-state)]]]])
+  [:div {:class "container-fluid"}
+   [:div {:class "row-fluid"}
+    [:div {:class "header col-md-12"}
+     [:h1 "Really neat bidi tests!"]]]
+   [:div {:class "row-fluid"}
+    [:div {:class "content"}
+     [:div {:class "col-md-2"}
+      [component-links (:root-link @app-state) (:foo-link @app-state)]]
+     [:div {:class "main col-md-10"}
+      [(:view @app-state)]]]]])
 
 (defn render-app []
   (reagent/render-component [component-main]
